@@ -1,0 +1,33 @@
+.todo__item {
+	width: 100px;
+	height: 200px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 5px;
+	border: 1px solid #adff2f;
+	border-radius: 5px;
+
+	color: #ffffff;
+}
+
+.todo__done {
+	border-color: #adff2f;
+}
+
+.todo__active {
+	border-color: #ff2f2f;
+}
+
+.todo__user {
+	margin-top: 0;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ffffff;
+
+	text-transform: uppercase;
+}
+
+.todo__title {
+	margin-top: 0;
+	margin-bottom: 0;
+}
