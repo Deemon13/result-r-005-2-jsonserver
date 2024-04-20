@@ -1,3 +1,5 @@
 import { route } from '../vars';
 
-export const URL = `https://jsonplaceholder.typicode.com/${route}`;
+const urlDB = 'http://localhost:3000';
+
+export const URL = `${urlDB}/${route}`;
