@@ -25,4 +25,5 @@ TodoItem.propTypes = {
 	completed: PropTypes.bool,
 	onClick: PropTypes.func,
 	id: PropTypes.number,
+	deleting: PropTypes.bool,
 };
