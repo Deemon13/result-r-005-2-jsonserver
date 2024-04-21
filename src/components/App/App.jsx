@@ -12,6 +12,9 @@ export const App = () => {
 	const [isChanging, setIsChanging] = useState(false);
 	const [refreshTodosFlag, setRefreshTodosFlag] = useState(false);
 
+	const [filter, setFilter] = useState('');
+	const [filteredTodos, setFilteredTodos] = useState([]);
+
 	const [idForChange, setIdForChange] = useState(null);
 
 	let newId = null;
@@ -64,6 +67,7 @@ export const App = () => {
 			.then(rawResponse => rawResponse.json())
 			.then(() => {
 				refreshTodos();
+				setFilter('');
 			});
 	};
 
@@ -96,25 +100,46 @@ export const App = () => {
 		setIsChanging(false);
 	};
 
+	useEffect(() => {
+		const filteredTodos = !filter
+			? todos
+			: todos.filter(item =>
+					item.title.toLowerCase().includes(filter.toLowerCase()),
+			  );
+		setFilteredTodos(filteredTodos);
+	}, [filter]);
+
 	return (
 		<div className={styles.app}>
 			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
+			<form className={styles.filter}>
+				<label htmlFor="filter">Искать Todo:</label>
+				<input
+					id="filter"
+					type="text"
+					name="filter"
+					value={filter}
+					onChange={e => setFilter(e.target.value)}
+				/>
+			</form>
 			<div className={styles.todos}>
 				{isLoading ? (
 					<Loader />
 				) : (
-					todos.map(({ id, userId, title, completed }) => (
-						<TodoItem
-							key={id}
-							userId={userId}
-							title={title}
-							completed={completed}
-							onClick={handleDeleteTodo}
-							changeTodo={requestTochangeTodo}
-							id={id}
-							deleting={isDeleting}
-						/>
-					))
+					(filter ? filteredTodos : todos).map(
+						({ id, userId, title, completed }) => (
+							<TodoItem
+								key={id}
+								userId={userId}
+								title={title}
+								completed={completed}
+								onClick={handleDeleteTodo}
+								changeTodo={requestTochangeTodo}
+								id={id}
+								deleting={isDeleting}
+							/>
+						),
+					)
 				)}
 			</div>
 			{isChanging && (
