@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { useState, useEffect } from 'react';
 import styles from './app.module.css';
 
@@ -107,6 +108,7 @@ export const App = () => {
 					item.title.toLowerCase().includes(filter.toLowerCase()),
 			  );
 		setFilteredTodos(filteredTodos);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter]);
 
 	return (
