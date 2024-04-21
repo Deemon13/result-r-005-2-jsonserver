@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './app.module.css';
 
-import { Loader, TodoItem } from '../../components';
+import { FormCreateTodo, Loader, TodoItem } from '../../components';
 import { URL } from '../../constants';
 
 export const App = () => {
@@ -9,7 +9,12 @@ export const App = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isCreating, setIsCreating] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isChanging, setIsChanging] = useState(false);
 	const [refreshTodosFlag, setRefreshTodosFlag] = useState(false);
+
+	const [idForChange, setIdForChange] = useState(null);
+
+	let newId = null;
 
 	const refreshTodos = () => setRefreshTodosFlag(!refreshTodosFlag);
 
@@ -62,18 +67,38 @@ export const App = () => {
 			});
 	};
 
+	const requestTochangeTodo = id => {
+		newId = id;
+		setIdForChange(newId);
+		setIsChanging(true);
+	};
+
+	const handleSubmitChanges = event => {
+		event.preventDefault();
+
+		const form = event.currentTarget;
+		const newTitle = form.elements.changeTodo.value;
+
+		fetch(URL + `/${idForChange}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json;charset=utf-8' },
+			body: JSON.stringify({
+				userId: 1,
+				completed: false,
+				title: newTitle,
+			}),
+		})
+			.then(rawResponse => rawResponse.json())
+			.then(() => {
+				refreshTodos();
+			});
+
+		setIsChanging(false);
+	};
+
 	return (
 		<div className={styles.app}>
-			<form onSubmit={handleCreateTodo}>
-				<label>
-					{' '}
-					Добавление задачи:
-					<input type="text" name="todo" />
-				</label>
-				<button disabled={isCreating} type="submit">
-					Создать задачу
-				</button>
-			</form>
+			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
 			<div className={styles.todos}>
 				{isLoading ? (
 					<Loader />
@@ -85,12 +110,19 @@ export const App = () => {
 							title={title}
 							completed={completed}
 							onClick={handleDeleteTodo}
+							changeTodo={requestTochangeTodo}
 							id={id}
 							deleting={isDeleting}
 						/>
 					))
 				)}
 			</div>
+			{isChanging && (
+				<form onSubmit={handleSubmitChanges}>
+					<input autoFocus name="changeTodo" />
+					<button type="submit">Меняем!</button>
+				</form>
+			)}
 		</div>
 	);
 };

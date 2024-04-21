@@ -10,4 +10,6 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 5px;
+
+	margin-bottom: 20px;
 }
