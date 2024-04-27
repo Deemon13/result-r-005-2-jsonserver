@@ -4,13 +4,22 @@ import styles from './formCreateTodo.module.css';
 
 export const FormCreateTodo = ({ onSubmit, isCreating }) => {
 	return (
-		<form onSubmit={onSubmit} className={styles.form__createTodo}>
-			<label htmlFor="todo">
-				{' '}
+		<form onSubmit={onSubmit} className={styles.createTodo__form}>
+			<label htmlFor="todo" className={styles.createTodo__label}>
 				Добавление задачи:
-				<input id="todo" disabled={isCreating} type="text" name="todo" />
 			</label>
-			<button disabled={isCreating} type="submit">
+			<input
+				id="todo"
+				disabled={isCreating}
+				type="text"
+				name="todo"
+				className={styles.createTodo__input}
+			/>
+			<button
+				disabled={isCreating}
+				type="submit"
+				className={styles.createTodo__submit}
+			>
 				Создать задачу
 			</button>
 		</form>

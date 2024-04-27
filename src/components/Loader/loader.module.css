@@ -5,12 +5,13 @@
 	align-items: center;
 	position: fixed;
 	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	left: 30%;
+	transform: translate(0, -50%);
+	transform: rotate(-90deg);
 	padding: 0 5px;
 	display: flex;
 	height: 40px;
-	width: 500px;
+	width: 250px;
 }
 
 .progressValue {

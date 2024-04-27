@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import styles from './app.module.css';
 
-import { FormCreateTodo, Loader, TodoItem } from '../../components';
+import { FormCreateTodo, Loader, TodoItem, Filter, Sorter } from '../../components';
 import { URL } from '../../constants';
 
 export const App = () => {
@@ -122,19 +122,8 @@ export const App = () => {
 	return (
 		<div className={styles.app}>
 			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
-			<form className={styles.filter}>
-				<label htmlFor="filter">Искать Todo:</label>
-				<input
-					id="filter"
-					type="text"
-					name="filter"
-					value={filter}
-					onChange={e => setFilter(e.target.value)}
-				/>
-			</form>
-			<button type="button" onClick={handleSort} disabled={filter}>
-				По алфавиту!
-			</button>
+			<Filter value={filter} onChange={e => setFilter(e.target.value)} />
+			<Sorter onClick={handleSort} disabled={filter} title="По алфавиту!" />
 			<div className={styles.todos}>
 				{isLoading ? (
 					<Loader />

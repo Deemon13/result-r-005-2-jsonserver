@@ -1,0 +1,29 @@
+.filter {
+	max-width: 350px;
+	margin: 0 auto;
+	padding: 15px;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	border: 1px solid #ffffff;
+	border-radius: 10px;
+}
+
+.filter__label {
+	text-align: left;
+}
+
+.filter__input {
+	padding: 5px;
+	background-color: transparent;
+	border: none;
+	border-bottom: 1px solid #ffffff;
+}
+
+.filter__input:focus {
+	outline: 1px solid #00ff00;
+	border-radius: 5px;
+	border-bottom-color: #00ff00;
+}
