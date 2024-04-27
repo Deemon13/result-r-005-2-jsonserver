@@ -1,5 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState, useEffect } from 'react';
+import _ from 'lodash';
 import styles from './app.module.css';
 
 import { FormCreateTodo, Loader, TodoItem } from '../../components';
@@ -16,11 +17,14 @@ export const App = () => {
 	const [filter, setFilter] = useState('');
 	const [filteredTodos, setFilteredTodos] = useState([]);
 
+	const [sortBy, setSortBy] = useState(false);
+
 	const [idForChange, setIdForChange] = useState(null);
 
 	let newId = null;
 
 	const refreshTodos = () => setRefreshTodosFlag(!refreshTodosFlag);
+	const sortedTodos = _.orderBy(todos, ['title'], ['asc']);
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -111,6 +115,10 @@ export const App = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filter]);
 
+	const handleSort = () => {
+		setSortBy(!sortBy);
+	};
+
 	return (
 		<div className={styles.app}>
 			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
@@ -124,11 +132,14 @@ export const App = () => {
 					onChange={e => setFilter(e.target.value)}
 				/>
 			</form>
+			<button type="button" onClick={handleSort} disabled={filter}>
+				По алфавиту!
+			</button>
 			<div className={styles.todos}>
 				{isLoading ? (
 					<Loader />
 				) : (
-					(filter ? filteredTodos : todos).map(
+					(filter ? filteredTodos : sortBy ? sortedTodos : todos).map(
 						({ id, userId, title, completed }) => (
 							<TodoItem
 								key={id}
