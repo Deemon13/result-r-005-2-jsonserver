@@ -3,7 +3,14 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import styles from './app.module.css';
 
-import { FormCreateTodo, Loader, TodoItem, Filter, Sorter } from '../../components';
+import {
+	FormCreateTodo,
+	Loader,
+	TodoItem,
+	Filter,
+	Sorter,
+	TodoChanger,
+} from '../../components';
 import { URL } from '../../constants';
 
 export const App = () => {
@@ -144,12 +151,7 @@ export const App = () => {
 					)
 				)}
 			</div>
-			{isChanging && (
-				<form onSubmit={handleSubmitChanges}>
-					<input autoFocus name="changeTodo" />
-					<button type="submit">Меняем!</button>
-				</form>
-			)}
+			{isChanging && <TodoChanger onSubmit={handleSubmitChanges} title="Меняем!" />}
 		</div>
 	);
 };

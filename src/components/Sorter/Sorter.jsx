@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 
 import styles from './sorter.module.css';
 
-export const Sorter = ({ onClick, filter, title }) => {
+export const Sorter = ({ onClick, disabled, title }) => {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
-			disabled={filter}
+			disabled={disabled}
 			className={styles.sorter}
 		>
 			{title}
@@ -17,6 +17,6 @@ export const Sorter = ({ onClick, filter, title }) => {
 
 Sorter.propTypes = {
 	onClick: PropTypes.func,
-	filter: PropTypes.string,
+	disabled: PropTypes.string,
 	title: PropTypes.string,
 };
