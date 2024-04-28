@@ -1,6 +1,4 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { useState, useEffect } from 'react';
-import _, { debounce } from 'lodash';
+import { useState } from 'react';
 import styles from './app.module.css';
 
 import {
@@ -11,77 +9,38 @@ import {
 	Sorter,
 	TodoChanger,
 } from '../../components';
-import { URL } from '../../constants';
+
+import {
+	useGetTodos,
+	useCreateTodo,
+	useDeleteTodo,
+	useChangeTodo,
+	useSort,
+	useFilter,
+} from '../../hooks';
 
 export const App = () => {
-	const [todos, setTodos] = useState([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [isCreating, setIsCreating] = useState(false);
-	const [isDeleting, setIsDeleting] = useState(false);
 	const [isChanging, setIsChanging] = useState(false);
 	const [refreshTodosFlag, setRefreshTodosFlag] = useState(false);
-
 	const [filter, setFilter] = useState('');
 	const [filteredTodos, setFilteredTodos] = useState([]);
-
-	const [sortBy, setSortBy] = useState(false);
-
 	const [idForChange, setIdForChange] = useState(null);
 
-	let newId = null;
-
 	const refreshTodos = () => setRefreshTodosFlag(!refreshTodosFlag);
-	const sortedTodos = _.orderBy(todos, ['title'], ['asc']);
 
-	useEffect(() => {
-		setIsLoading(true);
+	const { todos, isLoading } = useGetTodos(refreshTodosFlag);
+	const { isCreating, createTodo } = useCreateTodo(refreshTodos);
+	const { isDeleting, deleteTodo } = useDeleteTodo(refreshTodos, setFilter);
+	const { submitChanges } = useChangeTodo(
+		idForChange,
+		refreshTodos,
+		setFilter,
+		setIsChanging,
+	);
+	const { sortBy, sortedTodos, handleSort } = useSort(todos);
+	const { handleFilter } = useFilter(todos, filter, setFilteredTodos, setFilter);
 
-		fetch(URL)
-			.then(loadedData => loadedData.json())
-			.then(loadedTodos => {
-				setTodos(loadedTodos);
-			})
-			.finally(() => {
-				setIsLoading(false);
-				setIsCreating(false);
-				setIsDeleting(false);
-			});
-	}, [refreshTodosFlag]);
-
-	const handleCreateTodo = event => {
-		event.preventDefault();
-		setIsCreating(true);
-
-		const form = event.currentTarget;
-		const todoTitle = form.elements.todo.value;
-		fetch(URL, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json; charset=utf-8' },
-			body: JSON.stringify({
-				userId: 1,
-				title: todoTitle,
-				completed: false,
-			}),
-		})
-			.then(rawResponse => rawResponse.json())
-			.then(() => {
-				refreshTodos();
-			});
-		form.reset();
-	};
-
-	const handleDeleteTodo = id => {
-		setIsDeleting(true);
-
-		fetch(URL + `/${id}`, {
-			method: 'DELETE',
-		})
-			.then(rawResponse => rawResponse.json())
-			.then(() => {
-				refreshTodos();
-				setFilter('');
-			});
-	};
+	let newId = null;
 
 	const requestTochangeTodo = id => {
 		newId = id;
@@ -89,54 +48,9 @@ export const App = () => {
 		setIsChanging(true);
 	};
 
-	const handleSubmitChanges = event => {
-		event.preventDefault();
-
-		const form = event.currentTarget;
-		const newTitle = form.elements.changeTodo.value;
-
-		fetch(URL + `/${idForChange}`, {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				userId: 1,
-				completed: false,
-				title: newTitle,
-			}),
-		})
-			.then(rawResponse => rawResponse.json())
-			.then(() => {
-				refreshTodos();
-			});
-
-		setIsChanging(false);
-	};
-
-	useEffect(() => {
-		const filteredTodos = !filter
-			? todos
-			: todos.filter(item =>
-					item.title.toLowerCase().includes(filter.toLowerCase()),
-			  );
-		setFilteredTodos(filteredTodos);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filter]);
-
-	const handleSort = () => {
-		setSortBy(!sortBy);
-	};
-
-	const handleFilterDebounce = debounce(value => {
-		setFilter(value);
-	}, 300);
-
-	const handleFilter = event => {
-		handleFilterDebounce(event.target.value);
-	};
-
 	return (
 		<div className={styles.app}>
-			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
+			<FormCreateTodo onSubmit={createTodo} isCreating={isCreating} />
 			<Filter value={filter} onChange={e => handleFilter(e)} />
 			<Sorter onClick={handleSort} disabled={filter} title="По алфавиту!" />
 			<div className={styles.todos}>
@@ -150,7 +64,7 @@ export const App = () => {
 								userId={userId}
 								title={title}
 								completed={completed}
-								onClick={handleDeleteTodo}
+								onClick={deleteTodo}
 								changeTodo={requestTochangeTodo}
 								id={id}
 								deleting={isDeleting}
@@ -159,7 +73,7 @@ export const App = () => {
 					)
 				)}
 			</div>
-			{isChanging && <TodoChanger onSubmit={handleSubmitChanges} title="Меняем!" />}
+			{isChanging && <TodoChanger onSubmit={submitChanges} title="Меняем!" />}
 		</div>
 	);
 };
