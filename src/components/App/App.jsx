@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState, useEffect } from 'react';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import styles from './app.module.css';
 
 import {
@@ -126,10 +126,18 @@ export const App = () => {
 		setSortBy(!sortBy);
 	};
 
+	const handleFilterDebounce = debounce(value => {
+		setFilter(value);
+	}, 300);
+
+	const handleFilter = event => {
+		handleFilterDebounce(event.target.value);
+	};
+
 	return (
 		<div className={styles.app}>
 			<FormCreateTodo onSubmit={handleCreateTodo} isCreating={isCreating} />
-			<Filter value={filter} onChange={e => setFilter(e.target.value)} />
+			<Filter value={filter} onChange={e => handleFilter(e)} />
 			<Sorter onClick={handleSort} disabled={filter} title="По алфавиту!" />
 			<div className={styles.todos}>
 				{isLoading ? (
